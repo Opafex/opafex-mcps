@@ -1,6 +1,6 @@
 # my-mcp-server
 
-A [Model Context Protocol](https://modelcontextprotocol.io/) server built with [@opafex/mcp-shared](https://github.com/opafex/opafex-mcps).
+A [Model Context Protocol](https://modelcontextprotocol.io/) server built with [@opafex/mcp-shared](https://github.com/Opafex/opafex-mcps).
 
 ## Quick Start
 
@@ -50,7 +50,7 @@ npm run test:watch # Watch mode
 4. Wire it up in `src/index.ts`
 5. Add tests in `tests/`
 
-See the [enrichment MCP](https://github.com/opafex/opafex-mcps/tree/main/packages/enrichment) for a full production example.
+See the [enrichment MCP](https://github.com/Opafex/opafex-mcps/tree/main/packages/enrichment) for a full production example.
 
 ## License
 

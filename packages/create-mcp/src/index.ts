@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, readdirSync, readFileSync, writeFileSync, cpSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync, cpSync, renameSync } from 'node:fs';
 import { resolve, join, basename, dirname } from 'node:path';
 import { execSync } from 'node:child_process';
 
@@ -55,7 +55,7 @@ function parseArgs(args: string[]): Options {
 
 function printHelp(): void {
   console.log(`
-Usage: create-opafex-mcp <directory> [options]
+Usage: npm create @opafex/mcp <directory> -- [options]
 
 Create a new MCP server project with @opafex/mcp-shared.
 
@@ -67,8 +67,8 @@ Options:
   -h, --help             Show this help message
 
 Examples:
-  npx create-opafex-mcp my-enrichment-tool
-  npx create-opafex-mcp my-tool --name @myorg/mcp-tool --no-git
+  npm create @opafex/mcp my-enrichment-tool
+  npm create @opafex/mcp my-tool -- --name @myorg/mcp-tool --no-git
 `);
 }
 
@@ -97,6 +97,8 @@ function run(): void {
   // Copy template
   const templateDir = resolve(dirname(__dirname), 'template');
   cpSync(templateDir, targetDir, { recursive: true });
+  // npm strips .gitignore from published tarballs, so the template ships it as `gitignore`
+  renameSync(join(targetDir, 'gitignore'), join(targetDir, '.gitignore'));
 
   // Apply replacements
   const replacements: [string, string][] = [
