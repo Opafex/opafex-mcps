@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Opafex/mcp-web-research",
-  "description": "Web research: search (Brave Search API), SSRF-safe page fetching, structured extraction, page comparison",
+  "description": "Web search (Brave) and SSRF-safe page fetching, extraction and comparison for agents",
   "repository": {
     "url": "https://github.com/opafex/opafex-mcps",
     "source": "github",
