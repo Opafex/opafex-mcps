@@ -1,0 +1,60 @@
+{
+  "name": "@opafex/mcp-web-research",
+  "version": "0.1.0",
+  "description": "MCP server for web research — search, SSRF-safe page fetching, structured extraction and comparison",
+  "bin": {
+    "mcp-web-research": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "web-search",
+    "web-scraping",
+    "research",
+    "brave-search",
+    "fetch",
+    "ssrf"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opafex/opafex-mcps.git",
+    "directory": "packages/web-research"
+  },
+  "homepage": "https://github.com/opafex/opafex-mcps/tree/main/packages/web-research",
+  "bugs": {
+    "url": "https://github.com/opafex/opafex-mcps/issues"
+  },
+  "author": "Opafex",
+  "license": "MIT",
+  "dependencies": {
+    "@opafex/mcp-shared": "^1.1.0",
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "tsx": "^4.0.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "mcpName": "io.github.Opafex/mcp-web-research",
+  "publishConfig": {
+    "access": "public"
+  }
+}

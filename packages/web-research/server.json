@@ -1,0 +1,66 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Opafex/mcp-web-research",
+  "description": "Web research: search (Brave Search API), SSRF-safe page fetching, structured extraction, page comparison",
+  "repository": {
+    "url": "https://github.com/opafex/opafex-mcps",
+    "source": "github",
+    "subfolder": "packages/web-research"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@opafex/mcp-web-research",
+      "version": "0.1.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "Brave Search API key; enables web_search and research_topic (recommended)",
+          "isRequired": false,
+          "isSecret": true,
+          "name": "BRAVE_SEARCH_API_KEY"
+        },
+        {
+          "description": "Search provider: \"brave\" or \"duckduckgo\" (unofficial HTML scraper, explicit opt-in only)",
+          "isRequired": false,
+          "isSecret": false,
+          "name": "WEB_RESEARCH_SEARCH_PROVIDER"
+        },
+        {
+          "description": "User-Agent sent with every request (default identifies the bot and links to the repo)",
+          "isRequired": false,
+          "isSecret": false,
+          "name": "USER_AGENT"
+        },
+        {
+          "description": "Search result cache TTL in seconds (default: 900)",
+          "isRequired": false,
+          "isSecret": false,
+          "name": "SEARCH_CACHE_TTL"
+        },
+        {
+          "description": "Fetched page cache TTL in seconds (default: 3600)",
+          "isRequired": false,
+          "isSecret": false,
+          "name": "PAGE_CACHE_TTL"
+        },
+        {
+          "description": "Per-request timeout in milliseconds, across all redirect hops (default: 10000)",
+          "isRequired": false,
+          "isSecret": false,
+          "name": "FETCH_TIMEOUT_MS"
+        },
+        {
+          "description": "Maximum bytes read from a page body (default: 1000000)",
+          "isRequired": false,
+          "isSecret": false,
+          "name": "MAX_HTML_SIZE"
+        }
+      ]
+    }
+  ]
+}

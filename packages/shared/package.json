@@ -1,16 +1,18 @@
 {
   "name": "@opafex/mcp-shared",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Shared utilities for building MCP servers — server factory, caching, config, logging, validation",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run"
   },
   "keywords": [
     "mcp",
@@ -30,11 +32,12 @@
   "author": "Opafex",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0"
+    "@modelcontextprotocol/sdk": "^1.27.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w packages/shared && npm run build -w packages/enrichment && npm run build -w packages/file-processor && npm run build -w packages/create-mcp",
+    "build": "npm run build -w packages/shared && npm run build -w packages/enrichment && npm run build -w packages/file-processor && npm run build -w packages/web-research && npm run build -w packages/approval-queue && npm run build -w packages/create-mcp",
     "test": "npm run test --workspaces --if-present",
     "clean": "rm -rf packages/*/dist",
     "typecheck": "npm run build"

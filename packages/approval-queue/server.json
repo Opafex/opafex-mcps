@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Opafex/mcp-approval-queue",
+  "description": "Human-in-the-loop approval gate: risk-scored requests decided by a person via MCP elicitation or a CLI; the agent can ask, never approve",
+  "repository": {
+    "url": "https://github.com/opafex/opafex-mcps",
+    "source": "github",
+    "subfolder": "packages/approval-queue"
+  },
+  "version": "0.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@opafex/mcp-approval-queue",
+      "version": "0.2.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "Directory holding state.json; the server and the CLI must share it (default ~/.opafex/approval-queue)",
+          "isRequired": false,
+          "isSecret": false,
+          "name": "APPROVAL_QUEUE_STATE_DIR"
+        },
+        {
+          "description": "Hours before an undecided request expires (default 24)",
+          "isRequired": false,
+          "isSecret": false,
+          "name": "APPROVAL_QUEUE_TTL_HOURS"
+        }
+      ]
+    }
+  ]
+}

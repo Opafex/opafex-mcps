@@ -1,0 +1,66 @@
+{
+  "name": "@opafex/mcp-approval-queue",
+  "version": "0.2.0",
+  "description": "Human-in-the-loop approval gate for AI agents: risk scoring, decisions in the client's own UI via MCP elicitation, and a CLI. The agent can ask; only a human can approve.",
+  "bin": {
+    "mcp-approval-queue": "./dist/index.js"
+  },
+  "main": "./dist/lib.js",
+  "types": "./dist/lib.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib.d.ts",
+      "default": "./dist/lib.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "approval",
+    "human-in-the-loop",
+    "elicitation",
+    "guardrails",
+    "ai-safety",
+    "agents"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opafex/opafex-mcps.git",
+    "directory": "packages/approval-queue"
+  },
+  "homepage": "https://github.com/opafex/opafex-mcps/tree/main/packages/approval-queue",
+  "bugs": {
+    "url": "https://github.com/opafex/opafex-mcps/issues"
+  },
+  "author": "Opafex",
+  "license": "MIT",
+  "dependencies": {
+    "@opafex/mcp-shared": "^1.1.0",
+    "@modelcontextprotocol/sdk": "^1.27.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "tsx": "^4.0.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "mcpName": "io.github.Opafex/mcp-approval-queue",
+  "publishConfig": {
+    "access": "public"
+  }
+}

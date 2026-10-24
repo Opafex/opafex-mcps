@@ -8,9 +8,9 @@ Open-source [Model Context Protocol](https://modelcontextprotocol.io/) servers b
 |---------|-------------|--------|
 | [`@opafex/mcp-enrichment`](./packages/enrichment) | Company, contact, email & phone enrichment via Clearbit, Hunter.io, Twilio | Available |
 | [`@opafex/mcp-file-processor`](./packages/file-processor) | Document text extraction, keyword detection, chunking | Available |
-| `@opafex/mcp-web-research` | Web search, page fetch, research synthesis | Planned |
-| `@opafex/mcp-approval-queue` | Human-in-the-loop approval workflows | Planned |
-| `@opafex/mcp-knowledge-grid` | Document indexing, semantic search, context composition | Planned |
+| [`@opafex/mcp-web-research`](./packages/web-research) | Web search (Brave API), SSRF-guarded page fetch, research synthesis | Available |
+| [`@opafex/mcp-approval-queue`](./packages/approval-queue) | Human-in-the-loop approval gate — the agent asks, only a person approves (elicitation or CLI) | Available |
+| [`@opafex/knowledge-grid`](https://github.com/Opafex/knowledge-grid) | Layered context for agents (a library, in its own repo) | Available |
 
 ## Quick Start
 
@@ -69,7 +69,8 @@ See [`packages/enrichment`](./packages/enrichment) as a reference implementation
 
 [`@opafex/mcp-shared`](./packages/shared) provides:
 
-- **`createMCPServer()`** — Reusable MCP server bootstrap with tool/resource registration and stdio transport
+- **`createMCPServer()` / `buildMCPServer()`** — Reusable MCP server bootstrap with tool/resource registration and stdio transport
+- **`ToolContext.elicit`** — ask the user a question through the client's UI (MCP elicitation), out of the model's reach
 - **Validation helpers** — Email, domain, phone format validation
 
 ## License

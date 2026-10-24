@@ -1,6 +1,12 @@
 // Server factory
-export { createMCPServer } from './server-factory.js';
-export type { ToolDefinition, ResourceDefinition, MCPServerConfig } from './server-factory.js';
+export { createMCPServer, buildMCPServer } from './server-factory.js';
+export type {
+  ToolDefinition,
+  ToolContext,
+  ElicitationRequest,
+  ResourceDefinition,
+  MCPServerConfig,
+} from './server-factory.js';
 
 // Cache
 export { InMemoryCacheProvider, NoOpCacheProvider } from './cache.js';
