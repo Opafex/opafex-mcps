@@ -3,8 +3,8 @@
   "version": "1.0.1",
   "description": "Scaffold a new MCP server project with @opafex/mcp-shared",
   "bin": {
-    "create-opafex-mcp": "./dist/index.js",
-    "create-mcp": "./dist/index.js"
+    "create-opafex-mcp": "dist/index.js",
+    "create-mcp": "dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [

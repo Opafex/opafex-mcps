@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Human-in-the-loop approval gate for AI agents: risk scoring, decisions in the client's own UI via MCP elicitation, and a CLI. The agent can ask; only a human can approve.",
   "bin": {
-    "mcp-approval-queue": "./dist/index.js"
+    "mcp-approval-queue": "dist/index.js"
   },
   "main": "./dist/lib.js",
   "types": "./dist/lib.d.ts",

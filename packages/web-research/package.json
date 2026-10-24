@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "MCP server for web research — search, SSRF-safe page fetching, structured extraction and comparison",
   "bin": {
-    "mcp-web-research": "./dist/index.js"
+    "mcp-web-research": "dist/index.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
