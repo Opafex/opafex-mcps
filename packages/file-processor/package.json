@@ -43,7 +43,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/opafex/opafex-mcps.git",
+    "url": "git+https://github.com/opafex/opafex-mcps.git",
     "directory": "packages/file-processor"
   },
   "homepage": "https://github.com/opafex/opafex-mcps/tree/main/packages/file-processor",
