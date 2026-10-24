@@ -9,7 +9,9 @@
   "main": "./dist/index.js",
   "files": [
     "dist",
-    "template"
+    "template",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
@@ -26,5 +28,22 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opafex/opafex-mcps.git",
+    "directory": "packages/create-mcp"
+  },
+  "homepage": "https://github.com/opafex/opafex-mcps/tree/main/packages/create-mcp",
+  "bugs": {
+    "url": "https://github.com/opafex/opafex-mcps/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "scaffold",
+    "create",
+    "template"
+  ],
+  "author": "Opafex"
 }

@@ -2,7 +2,9 @@
   "name": "my-mcp-server",
   "version": "0.1.0",
   "description": "An MCP server built with @opafex/mcp-shared",
-  "bin": { "my-mcp-server": "./dist/index.js" },
+  "bin": {
+    "my-mcp-server": "./dist/index.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -13,8 +15,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@opafex/mcp-shared": "^1.0.0",
-    "@modelcontextprotocol/sdk": "^1.12.0"
+    "@opafex/mcp-shared": "^1.1.0",
+    "@modelcontextprotocol/sdk": "^1.27.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -22,6 +24,8 @@
     "tsx": "^4.0.0",
     "vitest": "^1.0.0"
   },
-  "engines": { "node": ">=20.0.0" },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "license": "MIT"
 }
