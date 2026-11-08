@@ -9,8 +9,13 @@ import { config, NODE, tempDir } from './helpers.js';
 const winFs = (files: string[]) => (f: string) => files.map((x) => x.toLowerCase()).includes(f.toLowerCase());
 
 describe('Windows: nothing that needs cmd.exe', () => {
-  const env = { Path: 'C:\\Git\\cmd;C:\\nodejs;relative\\dir' };
-  const files = ['C:\\Git\\cmd\\git.exe', 'C:\\nodejs\\npx.cmd', 'C:\\nodejs\\node.exe', 'C:\\tools\\build.cmd', 'C:\\tools\\deploy.bat'];
+  const env = { Path: 'C:\\Git\\cmd;C:\\nodejs;C:\\Windows\\System32;C:\\PS;relative\\dir' };
+  // The shells exist on this fake PATH, so a refusal below is the shell rule, not "not found".
+  const files = [
+    'C:\\Git\\cmd\\git.exe', 'C:\\nodejs\\npx.cmd', 'C:\\nodejs\\node.exe', 'C:\\tools\\build.cmd', 'C:\\tools\\deploy.bat',
+    'C:\\Windows\\System32\\cmd.exe', 'C:\\Windows\\System32\\wsl.exe', 'C:\\Windows\\System32\\wscript.exe',
+    'C:\\PS\\powershell.exe', 'C:\\PS\\pwsh.exe', 'C:\\Git\\cmd\\bash.exe',
+  ];
   const resolve = (exe: string) => resolveExecutable(exe, { platform: 'win32', env, isRunnableFile: winFs(files) });
 
   it('refuses .bat, .cmd, .ps1 and other host-run files by path', () => {
@@ -29,7 +34,9 @@ describe('Windows: nothing that needs cmd.exe', () => {
 
   it('refuses shells by name, with or without .exe', () => {
     for (const exe of ['cmd', 'cmd.exe', 'C:\\Windows\\System32\\cmd.exe', 'powershell.exe', 'pwsh', 'bash.exe', 'wsl', 'wscript.exe']) {
-      expect(resolve(exe).status, exe).toBe('refused');
+      const v = resolve(exe);
+      expect(v.status, exe).toBe('refused');
+      if (v.status === 'refused') expect(v.message, exe).toMatch(/shell/);
     }
   });
 
@@ -48,7 +55,11 @@ describe('POSIX: no shells either', () => {
     resolveExecutable(exe, { platform: 'linux', env: { PATH: '/usr/bin:/bin' }, isRunnableFile: (f) => ['/bin/ls', '/bin/sh', '/usr/bin/bash'].includes(f) });
 
   it('refuses sh, bash, env and xargs', () => {
-    for (const exe of ['sh', '/bin/sh', 'bash', 'env', 'xargs', 'zsh']) expect(resolve(exe).status, exe).toBe('refused');
+    for (const exe of ['sh', '/bin/sh', 'bash', '/usr/bin/bash', 'env', 'xargs', 'zsh']) {
+      const v = resolve(exe);
+      expect(v.status, exe).toBe('refused');
+      if (v.status === 'refused') expect(v.message, exe).toMatch(/shell/);
+    }
   });
 
   it('resolves a bare name on PATH', () => {

@@ -83,9 +83,13 @@ describe('timeouts', () => {
 
   it('kills the command and the processes it started', async () => {
     const marker = path.join(dir, 'grandchild-survived.txt');
+    // On Windows, Node puts a non-detached child in a kill-on-close job, so a node grandchild
+    // would die with its parent anyway and the test would prove nothing. Detached there, it
+    // survives anything but a real tree kill. (On POSIX detached would leave the process group,
+    // which no program needs to do to outlive a careless kill.)
     const script = [
       "const { spawn } = require('node:child_process');",
-      `spawn(process.execPath, ['-e', ${JSON.stringify(`setTimeout(() => require('fs').writeFileSync(${JSON.stringify(marker)}, 'x'), 2500)`)}], { stdio: 'ignore' });`,
+      `spawn(process.execPath, ['-e', ${JSON.stringify(`setTimeout(() => require('fs').writeFileSync(${JSON.stringify(marker)}, 'x'), 2500)`)}], { stdio: 'ignore', detached: process.platform === 'win32' });`,
       'setTimeout(() => {}, 60000);',
     ].join('\n');
     const started = Date.now();
