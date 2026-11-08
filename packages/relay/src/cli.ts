@@ -79,7 +79,9 @@ function load(configPath: string, io: CliIo): RelayConfig | undefined {
   try {
     return loadConfig(configPath);
   } catch (e) {
-    if (e instanceof ConfigError) {
+    if (e instanceof ConfigError && e.problems.length === 1) {
+      io.err(e.problems[0]);
+    } else if (e instanceof ConfigError) {
       io.err(`The config at ${configPath} has problems:`);
       for (const p of e.problems) io.err(`  - ${p}`);
     } else {
