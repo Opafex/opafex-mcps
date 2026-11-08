@@ -1,0 +1,61 @@
+{
+  "name": "@opafex/relay",
+  "version": "0.1.0",
+  "description": "Let a hosted opafex agent use the commands and local MCP servers you allow on your own machine. Outbound only, no shell, nothing off your list.",
+  "type": "module",
+  "bin": {
+    "opafex-relay": "dist/index.js"
+  },
+  "main": "./dist/lib.js",
+  "types": "./dist/lib.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib.d.ts",
+      "default": "./dist/lib.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && tsc",
+    "prepublishOnly": "npm run build",
+    "start": "node dist/index.js run",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "relay",
+    "agents",
+    "opafex",
+    "local-tools",
+    "allow-list"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opafex/opafex-mcps.git",
+    "directory": "packages/relay"
+  },
+  "homepage": "https://github.com/opafex/opafex-mcps/tree/main/packages/relay",
+  "bugs": {
+    "url": "https://github.com/opafex/opafex-mcps/issues"
+  },
+  "author": "Opafex",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
