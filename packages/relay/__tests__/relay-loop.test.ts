@@ -133,6 +133,45 @@ describe('the poll loop', () => {
     expect(platform.polls).toBe(polls);
   });
 
+  it('409 hello_required sends hello again and carries on polling', async () => {
+    platform.nextReplies.push(
+      { status: 409, body: { error: 'This machine has no current offer', code: 'hello_required' } },
+      claim({ id: 'req-after-hello', kind: 'command', command: { id: 'say', params: { word: 'again' } } }),
+    );
+    start({ commands: [echoCmd] });
+    await waitFor(() => platform.results.length === 1, 15_000, 'result after re-hello');
+    expect(platform.hellos.length).toBe(2);
+    expect(platform.hellos[1]).toEqual(platform.hellos[0]); // the same offer, sent again
+    expect(platform.results[0].body).toMatchObject({ status: 'ok', result: { stdout: 'said again' } });
+  });
+
+  it('a second 409 hello_required inside a minute stops the relay instead of looping', async () => {
+    platform.nextReplies.push(
+      { status: 409, body: { error: 'no offer', code: 'hello_required' } },
+      { status: 409, body: { error: 'no offer', code: 'hello_required' } },
+    );
+    start({ commands: [echoCmd] });
+    expect(await running!).toMatchObject({ reason: 'hello_loop' });
+    expect(platform.hellos.length).toBe(2);
+  });
+
+  it('any other 409 on a poll still stops', async () => {
+    platform.nextReplies.push({ status: 409, body: { error: 'conflict', code: 'something_else' } });
+    start({ commands: [echoCmd] });
+    expect(await running!).toMatchObject({ reason: 'refused', httpStatus: 409 });
+    expect(platform.hellos.length).toBe(1);
+  });
+
+  it('a result whose JSON would be over 1 MB is cut to fit before it is posted', async () => {
+    const noisy = nodeCommand('noisy', "const s = '\\u0001'.repeat(256 * 1024); process.stdout.write(s); process.stderr.write(s)");
+    platform.nextReplies.push(claim({ id: 'req-noisy', kind: 'command', command: { id: 'noisy', params: {} } }));
+    start({ commands: [noisy] });
+    await waitFor(() => platform.results.length === 1, 15_000, 'noisy result');
+    const body = platform.results[0].body;
+    expect(Buffer.byteLength(JSON.stringify(body))).toBeLessThanOrEqual(1024 * 1024);
+    expect(body).toMatchObject({ status: 'ok', result: { exitCode: 0, truncated: true } });
+  });
+
   it('a 401 on hello stops before any poll', async () => {
     platform.helloReplies.push({ status: 401, body: { error: 'unknown key' } });
     start({});

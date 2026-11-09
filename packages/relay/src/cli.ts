@@ -70,6 +70,8 @@ function stopMessage(exit: RelayExit): string {
       return "This opafex account's plan does not include the relay, so the platform refused it. Nothing was run.";
     case 'forbidden':
       return `The platform refused the relay (HTTP 403: ${exit.message}). Nothing was run.`;
+    case 'hello_loop':
+      return 'The platform asked this machine to say hello again twice within a minute, so the relay stopped rather than loop. Check the machine in opafex Settings, then start the relay again.';
     case 'refused':
       return `The platform refused the relay's request (HTTP ${exit.httpStatus ?? '?'}: ${exit.message}). This relay is version ${RELAY_VERSION}; an update may be needed.`;
   }

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { homedir, hostname } from 'node:os';
 import path from 'node:path';
+import { COMMANDS_HELLO_BUDGET, jsonBytes } from './fit.js';
 import { stripJsonComments } from './jsonc.js';
 import { checkBaseUrl } from './url.js';
 
@@ -21,6 +22,7 @@ export const DEFAULT_PLATFORM_URL = 'https://app.opafex.com';
 export const DEFAULT_TIMEOUT_SECONDS = 30;
 export const MAX_TIMEOUT_SECONDS = 3600;
 export const DEFAULT_MAX_CONCURRENT = 4;
+export const MAX_PARAMS_PER_COMMAND = 20;
 
 /** The relay's own credential. Never passed to anything it runs, whatever a config says. */
 export const RELAY_KEY_ENV = 'OPAFEX_RELAY_KEY';
@@ -246,6 +248,7 @@ function validateParams(o: Obj, where: string, problems: string[]): ParamConfig[
     problems.push(`${where}.params must be a list`);
     return [];
   }
+  if (v.length > MAX_PARAMS_PER_COMMAND) problems.push(`${where}.params lists ${v.length}; the limit is ${MAX_PARAMS_PER_COMMAND}`);
   const out: ParamConfig[] = [];
   const seen = new Set<string>();
   v.forEach((p, i) => {
@@ -399,6 +402,13 @@ export function validateConfig(raw: unknown, configDir: string): RelayConfig {
     mcpServers.push(srv);
   });
 
+  // What hello carries for the commands must leave room under the platform's 2 MB for MCP tools.
+  const commandsBytes = jsonBytes(
+    commands.map((c) => ({ id: c.id, description: c.description, params: c.params.map((p) => ({ name: p.name, description: p.description, pattern: p.pattern })) })),
+  );
+  if (commandsBytes > COMMANDS_HELLO_BUDGET) {
+    problems.push(`the commands' descriptions and patterns come to ${Math.ceil(commandsBytes / 1024)} KB; the limit is ${COMMANDS_HELLO_BUDGET / 1024} KB`);
+  }
   if (problems.length) throw new ConfigError(problems);
   return {
     platformUrl,

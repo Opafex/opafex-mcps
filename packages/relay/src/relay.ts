@@ -3,6 +3,7 @@ import { planCommand, type RefusalCode } from './allowlist.js';
 import { ConfigError, configWarnings, loadConfig, type RelayConfig } from './config.js';
 import { scrubEnv } from './env.js';
 import { resolveExecutable } from './executable.js';
+import { fitHello, fitResult } from './fit.js';
 import { buildHello } from './hello.js';
 import { McpFleet } from './mcp.js';
 import { PlatformClient, type StopReason } from './platform-client.js';
@@ -17,6 +18,8 @@ const MAX_DEADLINE_MS = 15 * 60_000;
 const MAX_POLL_WAIT_SECONDS = 25;
 /** A poll that comes back empty faster than this is followed by a pause, so a platform that does not hold the poll is not hammered. */
 const MIN_EMPTY_POLL_MS = 1000;
+/** The platform may ask for hello again (409 hello_required) once in this window; twice means something is broken. */
+const REHELLO_WINDOW_MS = 60_000;
 
 export type ResultBody =
   | { status: 'ok'; result: Record<string, unknown> }
@@ -76,6 +79,8 @@ export class Relay {
   private helloLoop?: Promise<void>;
   private lastHello = '';
   private reloadChain: Promise<void> = Promise.resolve();
+  private lastRehelloAt?: number;
+  private lastDropped = '';
   /** Counts accepted hellos; tests read it. */
   hellosSent = 0;
 
@@ -164,7 +169,13 @@ export class Relay {
     let attempt = 0;
     while (this.helloDirty && !this.exit) {
       this.helloDirty = false;
-      const payload = buildHello(this.config, this.fleet.offer(), this.platform);
+      const fitted = fitHello(buildHello(this.config, this.fleet.offer(), this.platform));
+      const payload = fitted.hello;
+      const droppedKey = fitted.dropped.join(',');
+      if (fitted.dropped.length && droppedKey !== this.lastDropped) {
+        this.log(`hello would be over the platform's 2 MB, so ${fitted.dropped.length} MCP tool(s) were left out: ${fitted.dropped.slice(0, 10).join(', ')}${fitted.dropped.length > 10 ? ', …' : ''}`);
+      }
+      this.lastDropped = droppedKey;
       const json = JSON.stringify(payload);
       if (json === this.lastHello) continue;
       for (;;) {
@@ -236,6 +247,22 @@ export class Relay {
       const started = Date.now();
       const out = await this.client.next<{ request?: unknown }>(this.pollWaitSeconds, this.stopCtl.signal);
       if (this.exit) return;
+      if (out.status === 'stop' && out.httpStatus === 409 && out.code === 'hello_required') {
+        // The platform has no current offer from this machine (a reset row, or a poll that beat
+        // the hello). Say hello again and carry on, but only once a minute: a platform that keeps
+        // asking would otherwise spin the relay.
+        const now = Date.now();
+        if (this.lastRehelloAt !== undefined && now - this.lastRehelloAt < REHELLO_WINDOW_MS) {
+          this.finish({ reason: 'hello_loop', message: out.message, httpStatus: 409 });
+          return;
+        }
+        this.lastRehelloAt = now;
+        this.log("the platform asked for this machine's offer again; sending hello");
+        this.lastHello = '';
+        this.markHelloDirty();
+        await this.helloLoop;
+        continue;
+      }
       if (out.status === 'stop') {
         this.finish({ reason: out.reason, message: out.message, httpStatus: out.httpStatus });
         return;
@@ -387,7 +414,8 @@ export class Relay {
     return null;
   }
 
-  private async post(id: string, body: ResultBody, deadline: number): Promise<void> {
+  private async post(id: string, unfitted: ResultBody, deadline: number): Promise<void> {
+    const body = fitResult(unfitted);
     let attempt = 0;
     for (;;) {
       const out = await this.client.postResult(id, body);

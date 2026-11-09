@@ -3,11 +3,11 @@ import { RELAY_VERSION } from './version.js';
 /** The most the relay reads of any platform response. Its answers are small. */
 const MAX_RESPONSE_BYTES = 1024 * 1024;
 
-export type StopReason = 'unauthorized' | 'not_entitled' | 'forbidden' | 'refused';
+export type StopReason = 'unauthorized' | 'not_entitled' | 'forbidden' | 'refused' | 'hello_loop';
 
 export type ApiOutcome<T> =
   | { status: 'ok'; httpStatus: number; body: T | null; serverDate?: number }
-  | { status: 'stop'; reason: StopReason; httpStatus: number; message: string }
+  | { status: 'stop'; reason: StopReason; httpStatus: number; message: string; code?: string }
   | { status: 'retry'; httpStatus?: number; message: string };
 
 export type ResultOutcome =
@@ -157,7 +157,7 @@ export class PlatformClient {
     if (res.status === 408 || res.status === 429 || res.status >= 500) {
       return { status: 'retry', httpStatus: res.status, message: said };
     }
-    return { status: 'stop', reason: 'refused', httpStatus: res.status, message: said };
+    return { status: 'stop', reason: 'refused', httpStatus: res.status, message: said, ...(code ? { code } : {}) };
   }
 
   hello<T>(payload: unknown): Promise<ApiOutcome<T>> {
