@@ -185,6 +185,20 @@ describe('the poll loop', () => {
     expect(await running!).toMatchObject({ reason: 'not_entitled' });
   });
 
+  it('a 403 relay_account_paused on a poll stops the relay and says the account is paused', async () => {
+    platform.nextReplies.push({ status: 403, body: { success: false, error: 'This account is paused.', code: 'relay_account_paused' } });
+    start({});
+    expect(await running!).toMatchObject({ reason: 'paused' });
+  });
+
+  it('a 403 relay_account_paused on a result post stops the relay (it is not "another relay holds it")', async () => {
+    platform.nextReplies.push(claim({ id: 'req-paused', kind: 'command', command: { id: 'say', params: { word: 'x' } } }));
+    platform.resultReplies.push({ status: 403, body: { success: false, error: 'This account is paused.', code: 'relay_account_paused' } });
+    start({ commands: [echoCmd] });
+    expect(await running!).toMatchObject({ reason: 'paused' });
+    expect(platform.results).toHaveLength(1);
+  });
+
   it('5xx backs off (doubling) and then carries on', async () => {
     platform.nextReplies.push(
       { status: 503 },

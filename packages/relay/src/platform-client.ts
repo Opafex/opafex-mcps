@@ -3,7 +3,10 @@ import { RELAY_VERSION } from './version.js';
 /** The most the relay reads of any platform response. Its answers are small. */
 const MAX_RESPONSE_BYTES = 1024 * 1024;
 
-export type StopReason = 'unauthorized' | 'not_entitled' | 'forbidden' | 'refused' | 'hello_loop';
+export type StopReason = 'unauthorized' | 'not_entitled' | 'paused' | 'forbidden' | 'refused' | 'hello_loop';
+
+/** The 403 codes that name the ACCOUNT, not the request: the relay stops on them wherever they come. */
+const ACCOUNT_REFUSALS: Record<string, StopReason> = { relay_not_entitled: 'not_entitled', relay_account_paused: 'paused' };
 
 export type ApiOutcome<T> =
   | { status: 'ok'; httpStatus: number; body: T | null; serverDate?: number }
@@ -152,7 +155,7 @@ export class PlatformClient {
       return { status: 'stop', reason: 'unauthorized', httpStatus: 401, message: said };
     }
     if (res.status === 403) {
-      return { status: 'stop', reason: code === 'relay_not_entitled' ? 'not_entitled' : 'forbidden', httpStatus: 403, message: said };
+      return { status: 'stop', reason: (code && ACCOUNT_REFUSALS[code]) || 'forbidden', httpStatus: 403, message: said, ...(code ? { code } : {}) };
     }
     if (res.status === 408 || res.status === 429 || res.status >= 500) {
       return { status: 'retry', httpStatus: res.status, message: said };
@@ -175,7 +178,9 @@ export class PlatformClient {
     if (out.httpStatus === 401) return { status: 'stop', reason: 'unauthorized', message: out.message };
     if (out.httpStatus === 409) return { status: 'settled' };
     if (out.httpStatus === 410) return { status: 'expired' };
-    if (out.httpStatus === 403 && out.reason === 'not_entitled') return { status: 'stop', reason: 'not_entitled', message: out.message };
+    // An account-level 403 (no relay on the plan, the account paused) stops the relay; any other 403
+    // on a result means another relay claimed the request.
+    if (out.httpStatus === 403 && (out.reason === 'not_entitled' || out.reason === 'paused')) return { status: 'stop', reason: out.reason, message: out.message };
     if (out.httpStatus === 403) return { status: 'not_ours' };
     // Any other 4xx: the platform will not take this result, and sending it again will not change that.
     return { status: 'rejected', message: out.message };

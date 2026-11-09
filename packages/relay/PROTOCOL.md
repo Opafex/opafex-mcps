@@ -13,8 +13,10 @@ out and opens no port, it has its own revocable key, and nothing runs through a 
 - Success bodies are bare JSON. Errors are `{ success: false, error, code }`.
 - 401 = key revoked or unknown: the relay stops and says so, never retries.
 - Any 403 on hello or poll: the relay stops and says so. Codes include `relay_not_entitled` (the account's
-  product has no relay) and `relay_private_mode_unsupported` (a Private Mode account with its own
-  database). On a result post, a 403 means another relay claimed the request.
+  product has no relay), `relay_account_paused` (the account's subscription ended or it is on hold:
+  nothing on it runs until it is restarted) and `relay_private_mode_unsupported` (a Private Mode account
+  with its own database). On a result post, `relay_not_entitled` and `relay_account_paused` stop the
+  relay too; any other 403 there means another relay claimed the request.
 - 409 `hello_required` on a poll: the platform holds no current offer from this machine. The relay sends
   hello again and resumes; a second one within a minute stops it.
 - 413: a hello body over 2 MB or a result over 1 MB. The relay trims to fit before sending.

@@ -68,6 +68,8 @@ function stopMessage(exit: RelayExit): string {
       return 'The platform did not accept the relay key: it has been revoked or never existed. Make a new key in opafex Settings and start the relay again.';
     case 'not_entitled':
       return "This opafex account's plan does not include the relay, so the platform refused it. Nothing was run.";
+    case 'paused':
+      return `This opafex account is paused, so the platform refused the relay (${exit.message}). Start the relay again once the account is restarted.`;
     case 'forbidden':
       return `The platform refused the relay (HTTP 403: ${exit.message}). Nothing was run.`;
     case 'hello_loop':
