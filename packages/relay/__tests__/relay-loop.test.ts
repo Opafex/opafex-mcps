@@ -199,6 +199,14 @@ describe('the poll loop', () => {
     expect(platform.results).toHaveLength(1);
   });
 
+  it('a 403 relay_private_mode_unsupported on a result post stops the relay', async () => {
+    platform.nextReplies.push(claim({ id: 'req-pm', kind: 'command', command: { id: 'say', params: { word: 'x' } } }));
+    platform.resultReplies.push({ status: 403, body: { success: false, error: 'no relay table yet', code: 'relay_private_mode_unsupported' } });
+    start({ commands: [echoCmd] });
+    expect(await running!).toMatchObject({ reason: 'forbidden' });
+    expect(platform.results).toHaveLength(1);
+  });
+
   it('5xx backs off (doubling) and then carries on', async () => {
     platform.nextReplies.push(
       { status: 503 },
